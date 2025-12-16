@@ -13,5 +13,6 @@ app.use((req, res, next) => {
 
 // Routes will be mounted here later
 app.use('/api/questions', require('./routes/questions'));
+app.use('/api/upload', require('./routes/upload'));
 
 module.exports = app;
