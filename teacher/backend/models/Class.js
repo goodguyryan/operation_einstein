@@ -8,7 +8,10 @@ const ClassSchema = new mongoose.Schema({
   grade: {
     type: Number,
   },
-  // Future: students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }]
+  students: [{
+    name: String,
+    studentId: String, // e.g. "S-101"
+  }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Class', ClassSchema);

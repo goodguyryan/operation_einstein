@@ -27,6 +27,11 @@ const QuestionSchema = new mongoose.Schema({
   category: {
     type: String,
   },
+  quizId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Quiz',
+    // required: true // Strict mode: Uncomment later if we want to enforce all questions belong to a quiz
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Question', QuestionSchema);

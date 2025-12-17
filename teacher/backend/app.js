@@ -14,5 +14,8 @@ app.use((req, res, next) => {
 // Routes will be mounted here later
 app.use('/api/questions', require('./routes/questions'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/classes', require('./routes/classes'));
+app.use('/api/responses', require('./routes/responses'));
+app.use('/api/quizzes', require('./routes/quizzes'));
 
 module.exports = app;
