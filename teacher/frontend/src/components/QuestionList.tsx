@@ -10,14 +10,22 @@ type Question = {
   createdAt: string;
 };
 
-const QuestionList = () => {
+type Props = {
+  quizId?: string;
+  refreshTrigger?: number;
+};
+
+const QuestionList = ({ quizId, refreshTrigger }: Props) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const fetchQuestions = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:5001/api/questions');
+      let url = 'http://127.0.0.1:5001/api/questions';
+      if (quizId) url += `?quizId=${quizId}`;
+      
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Failed to fetch questions');
       const data = await res.json();
       setQuestions(data);
@@ -30,7 +38,7 @@ const QuestionList = () => {
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [quizId, refreshTrigger]);
 
   if (loading) return <p className="text-gray-500">Loading questions...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;

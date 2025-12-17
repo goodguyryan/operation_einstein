@@ -2,7 +2,12 @@
 
 import { useState } from 'react';
 
-const QuestionForm = () => {
+type Props = {
+  quizId?: string;
+  onQuestionCreated?: () => void;
+};
+
+const QuestionForm = ({ quizId, onQuestionCreated }: Props) => {
   const [text, setText] = useState('');
   const [type, setType] = useState('text');
   const [options, setOptions] = useState('');
@@ -42,6 +47,7 @@ const QuestionForm = () => {
       text,
       type,
       options: type === 'multiple-choice' ? options.split(',').map(o => o.trim()) : [],
+      quizId, // Include quizId
     };
 
     try {
@@ -62,6 +68,7 @@ const QuestionForm = () => {
       setText('');
       setOptions('');
       setType('text');
+      if (onQuestionCreated) onQuestionCreated();
     } catch (error: any) {
       console.error(error);
       alert(`Error: ${error.message}`);
