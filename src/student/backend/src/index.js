@@ -60,7 +60,7 @@ app.get("/api/workshops/:workshopId/assignments", async (req, res) => {
     await Promise.all([
       supabase
         .from("assignments")
-        .select("id,workshop_id,title,points,due_date,assignment_type")
+        .select("assignment_id,workshop_id,title,points,due_date,assignment_type")
         .eq("workshop_id", workshopId),
       supabase
         .from("workshops")
@@ -73,7 +73,7 @@ app.get("/api/workshops/:workshopId/assignments", async (req, res) => {
 
   return res.json(
     (assignments ?? []).map((a) => ({
-      id: a.id,
+      assignmentId: a.assignment_id,
       workshopId: a.workshop_id,
       title: a.title,
       workshop: workshop.code,
@@ -98,7 +98,7 @@ app.get("/api/dashboard", async (req, res) => {
 
   const { data: assignments, error: aErr } = await supabase
     .from("assignments")
-    .select("id,workshop_id,title,points,due_date,assignment_type");
+    .select("assignment_id,workshop_id,title,points,due_date,assignment_type");
 
   if (aErr) return res.status(500).json({ error: aErr.message });
   return res.json({
@@ -110,7 +110,7 @@ app.get("/api/dashboard", async (req, res) => {
       term: w.term,
     })),
     todoList: assignments.map((a) => ({
-      id: a.id,
+      assignmentId: a.assignment_id,
       workshopId: a.workshop_id,
       title: a.title,
       workshop: workshopCodeById.get(a.workshop_id) ?? "",
@@ -119,6 +119,57 @@ app.get("/api/dashboard", async (req, res) => {
       type: a.assignment_type,
     })),
   });
+});
+
+//GET all questions for an assignment
+app.get("/api/assignments/:assignmentId/questions", async (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+    const { data, error } = await supabase
+      .from("questions")
+      .select("question_id, assignment_id, question_text, type, question_order")
+      .eq("assignment_id", assignmentId)
+      .order("question_order", { ascending: true });
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    const questions = (data ?? []).map((q) => ({
+      questionId: q.question_id,
+      assignmentId: q.assignment_id,
+      questionText: q.question_text,
+      type: q.type,
+      questionOrder: q.question_order,
+    }));
+
+    return res.json(questions);
+  } catch (err) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//GET all question options for a question
+app.get("/api/questions/:questionId/options", async (req, res) => {
+  try {
+    const { questionId } = req.params;
+    const { data, error } = await supabase
+      .from("questionoptions")
+      .select("questionoption_id, question_id, option_order, option_text")
+      .eq("question_id", questionId)
+      .order("option_order", { ascending: true });
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    const options = (data ?? []).map((o) => ({
+      questionOptionId: o.questionoption_id,
+      questionId: o.question_id,
+      optionOrder: o.option_order,
+      optionText: o.option_text,
+    }));
+
+    return res.json(options);
+  } catch (err) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 //Start server

@@ -15,25 +15,7 @@ import {
 } from "lucide-react";
 
 import Link from "next/link";
-
-type Workshop = {
-  workshopId: string;
-  title: string;
-  code: string;
-  color: string;
-  term: string;
-};
-
-type Assignment = {
-  id: string;
-  title: string;
-  workshop: string;
-  workshopId: string;
-  points: number;
-  dueDate: string;
-  type: "assignment" | "announcement";
-};
-
+import type { Workshop, Assignment } from "./models/types";
 export const dynamic = "force-dynamic";
 
 async function getDashboardData(): Promise<{
@@ -127,7 +109,7 @@ export default async function StudentDashboard() {
             <h3 className="text-gray-500 font-bold uppercase text-xs tracking-wider mb-4">To Do</h3>
             <div className="flex flex-col gap-4">
               {todoList.map((item) => (
-                <div key={item.id} className="flex gap-3 group cursor-pointer">
+                <div key={item.assignmentId} className="flex gap-3 group cursor-pointer">
                   <div className="mt-1 text-gray-400 group-hover:text-emerald-600">
                     <AssignmentIcon type={item.type} />
                   </div>
